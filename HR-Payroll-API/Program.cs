@@ -17,6 +17,12 @@ builder.Services.AddDbContext<HrPayrollContext>(opt =>
 //Automapper 
 builder.Services.AddAutoMapper(typeof(MappingProfile));
 
+// enable cors
+builder.Services.AddCors(p=>p.AddPolicy("corspolicy", build=>
+{
+    build.WithOrigins("http://localhost:5173").AllowAnyMethod().AllowAnyHeader();
+}));
+
 var app = builder.Build();
 
 // Configure the HTTP request pipeline.
@@ -25,6 +31,9 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
 }
+
+// enable cors
+app.UseCors("corspolicy");
 
 app.UseHttpsRedirection();
 
