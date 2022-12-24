@@ -89,16 +89,17 @@ namespace HR_Payroll_API.Controllers
         // POST: api/LeaveBalances
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPost]
-        public async Task<ActionResult<LeaveBalance>> PostLeaveBalance(LeaveBalance leaveBalance)
+        public async Task<ActionResult<LeaveBalance>> PostLeaveBalance(LeaveBalanceDTO leaveBalanceDto)
         {
           if (_context.LeaveBalances == null)
           {
               return Problem("Entity set 'HrPayrollContext.LeaveBalances'  is null.");
           }
+            var leaveBalance = _mappper.Map<LeaveBalanceDTO, LeaveBalance>(leaveBalanceDto);
             _context.LeaveBalances.Add(leaveBalance);
             await _context.SaveChangesAsync();
 
-            return CreatedAtAction("GetLeaveBalance", new { id = leaveBalance.Id }, leaveBalance);
+            return Ok(leaveBalanceDto);
         }
 
         // DELETE: api/LeaveBalances/5
