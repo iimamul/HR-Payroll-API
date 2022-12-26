@@ -58,13 +58,13 @@ namespace HR_Payroll_API.Controllers
         // PUT: api/LeaveBalances/5
         // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
-        public async Task<IActionResult> PutLeaveBalance(int id, LeaveBalance leaveBalance)
+        public async Task<IActionResult> PutLeaveBalance(int id, LeaveBalanceDTO leaveBalanceDto)
         {
-            if (id != leaveBalance.Id)
+            if (id != leaveBalanceDto.Id)
             {
                 return BadRequest();
             }
-
+            var leaveBalance = _mappper.Map<LeaveBalanceDTO, LeaveBalance>(leaveBalanceDto);
             _context.Entry(leaveBalance).State = EntityState.Modified;
 
             try
