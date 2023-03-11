@@ -32,9 +32,9 @@ namespace HR_Payroll_API.Controllers
           {
               return NotFound();
           }
-          var leaveBalance= await _context.LeaveBalances.ToListAsync();
+          var leaveBalance= await _context.LeaveBalances.Include(l=>l.Employee).ToListAsync();
             //return await _context.LeaveBalances.ToListAsync();
-            return _mappper.Map<List<LeaveBalance>, List<LeaveBalanceDTO>>(leaveBalance);
+            return _mappper.Map<List<LeaveBalanceDTO>>(leaveBalance);
         }
 
         // GET: api/LeaveBalances/5
@@ -56,7 +56,6 @@ namespace HR_Payroll_API.Controllers
         }
 
         // PUT: api/LeaveBalances/5
-        // To protect from overposting attacks, see https://go.microsoft.com/fwlink/?linkid=2123754
         [HttpPut("{id}")]
         public async Task<IActionResult> PutLeaveBalance(int id, LeaveBalanceDTO leaveBalanceDto)
         {
@@ -64,18 +63,18 @@ namespace HR_Payroll_API.Controllers
             {
                 return BadRequest();
             }
-            var leaveBalance = _mappper.Map<LeaveBalanceDTO, LeaveBalance>(leaveBalanceDto);
-            _context.Entry(leaveBalance).State = EntityState.Modified;
 
             try
             {
+                var leaveBalance = _mappper.Map<LeaveBalance>(leaveBalanceDto);
+                _context.Entry(leaveBalance).State = EntityState.Modified;
                 await _context.SaveChangesAsync();
             }
-            catch (DbUpdateConcurrencyException)
+            catch (Exception message)
             {
                 if (!LeaveBalanceExists(id))
                 {
-                    return NotFound();
+                    return NotFound(message);
                 }
                 else
                 {
@@ -95,9 +94,20 @@ namespace HR_Payroll_API.Controllers
           {
               return Problem("Entity set 'HrPayrollContext.LeaveBalances'  is null.");
           }
-            var leaveBalance = _mappper.Map<LeaveBalanceDTO, LeaveBalance>(leaveBalanceDto);
-            _context.LeaveBalances.Add(leaveBalance);
-            await _context.SaveChangesAsync();
+            try
+            {
+                var leaveBalance = _mappper.Map<LeaveBalance>(leaveBalanceDto);
+                //var leaveBalance = new LeaveBalance();
+                //leaveBalance.BalanceDays= leaveBalanceDto.BalanceDays;
+                //leaveBalance.EmployeeId = leaveBalanceDto.EmployeeId;
+                //leaveBalance.LeaveName = leaveBalanceDto.LeaveName;
+                _context.LeaveBalances.Add(leaveBalance);
+                await _context.SaveChangesAsync();
+            }
+            catch (Exception msg)
+            {
+                throw;
+            }
 
             return Ok(leaveBalanceDto);
         }

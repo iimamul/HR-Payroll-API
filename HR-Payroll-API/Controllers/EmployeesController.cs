@@ -32,7 +32,12 @@ namespace HR_Payroll_API.Controllers
           {
               return NotFound();
           }
+
             var employeeList=await _context.Employees.ToListAsync();
+
+            //var joinedData = employeeList.Join(leaves, e => e.id, l => l.employeeId, (e, l) => (e.id, e.name, l.leaveType));
+
+
             return _mappper.Map<List<Employee>, List<EmployeeDTO>>(employeeList);
         }
 

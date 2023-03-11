@@ -8,9 +8,13 @@ namespace dotNetWithMySqlAPI.MappingProfiles
     {
         public MappingProfile()
         {
-            CreateMap<LeaveBalance, LeaveBalanceDTO>();
-            CreateMap<LeaveBalanceDTO, LeaveBalance>();
             CreateMap<Employee, EmployeeDTO>();
+            CreateMap<LeaveBalanceDTO, LeaveBalance>()
+                .ForMember(dest => dest.Employee, opt => opt.Ignore());
+
+            CreateMap<LeaveBalance, LeaveBalanceDTO>()
+                .ForMember(dest => dest.EmployeeName, opt => opt.MapFrom(src => src.Employee.EmployeeName))
+                .ForMember(dest => dest.EmployeeId, opt => opt.MapFrom(src => src.Employee.Id));
         }
     }
 }
